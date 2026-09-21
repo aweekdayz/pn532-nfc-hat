@@ -1,36 +1,37 @@
-# PN532 NFC HAT
-This is a PN532 NFC library for Raspberry Pi.
+# Raspberry Pi NFC Music Player
 
-![image](http://www.waveshare.net/photo/accBoard/PN532-NFC-HAT/PN532-NFC-HAT-3.jpg)
+This project turns a Raspberry Pi into a physical music player. NFC-tagged album cards select music, a rotary encoder controls volume and playback, and an infrared sensor detects the position of a model tonearm.
 
-## Features
--   Support I2C, SPI and HSU of PN532
--   Easy to understand how the PN532 chip works
+## What I Built
 
-## How to use
-1.  Plug the PN532 NFC Hat to your Pi.
-2.  The module supports I2C, SPI and HSU.
--   on I2C:
-    Set `I0: H` and `I1: L`, which means
-    ```
-    MOSI/SDA/TX Pin to Pi's SDA
-    NSS/SCL/RX Pin to Pi's SCL
-    ```
--   on SPI:
-    Set `I0: L` and `I1: H`, which means
-    ```
-    MOSI/SDA/TX Pin to Pi's MOSI
-    NSS/SCL/RX Pin to Pi's CE0
-    ```
--   on HSU(UART):
-    Set `I0: L` and `I1: L`, which means
-    ```
-    MOSI/SDA/TX Pin to Pi's RX
-    NSS/SCL/RX Pin to Pi's TX
-    ```
-3.  Modify the init lines and Run the example with `python3 example.py`.
-    -   for SPI, uncomment this line: `pn532 = PN532_SPI(debug=False, reset=20, cs=4)`, and comment lines for I2C and UART.
-    -   for I2C, uncomment this line: `pn532 = PN532_I2C(debug=False, reset=20, req=16)`, and comment lines for SPI and UART.
-    -   for UART, uncomment this line: `pn532 = PN532_UART(debug=False, reset=20)`, and comment lines for SPI, I2C.
-   
-4.  With waving a 13.56MHz NFC card, the UID of the card will be printed.
+- Read album-card UIDs with a PN532 NFC module connected over SPI.
+- Mapped each UID to album metadata and used MPD/MPC to load and play the matching album.
+- Added a KY-040 rotary encoder for volume and play/pause control.
+- Added an infrared sensor and a small state machine so lifting or returning the tonearm changes playback behavior.
+- Wrote separate hardware tests before combining the components in `main_app.py`.
+
+## Hardware and Software
+
+- Raspberry Pi 4B
+- Waveshare PN532 NFC HAT
+- KY-040 rotary encoder
+- Infrared sensor
+- Linux, Python, RPi.GPIO, MPD/MPC, and ALSA
+
+## Repository Guide
+
+- `main_app.py` - integrated application and state machine
+- `nfc_music_player.py` - NFC-to-album playback prototype
+- `get_id.py` and `get_multi-id.py` - NFC tag registration helpers
+- `test_encoder*.py`, `test_sensor.py`, and `volume_control.py` - component tests
+- `pn532/` and `example_*.py` - PN532 library and examples retained from the original Waveshare-compatible implementation
+
+## Attribution and AI Assistance
+
+The PN532 driver and example structure are based on existing Waveshare-compatible open-source code and should retain the original license and attribution. My project-specific work is the physical music-player integration, configuration, testing, and control logic.
+
+I used AI coding assistance while developing and debugging parts of the project. I assembled the hardware, adapted the code to the devices, tested the behavior on the Raspberry Pi, and iterated on the working system.
+
+## Safety and Privacy
+
+The album-card identifiers shown in the code are used only for this personal media interface. No authentication secrets or access credentials should be stored in the repository.
